@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Maths Genius</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #43cea2, #185a9d);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .screen {
+      display: none;
+      text-align: center;
+      width: 90%;
+      max-width: 500px;
+      padding: 30px;
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      animation: fadeIn 0.6s ease;
+    }
+
+    .active {
+      display: block;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    h1 { margin-bottom: 10px; }
+    p { margin-bottom: 20px; }
+
+    input {
+      width: 80%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px;
+      transition: transform 0.2s;
+    }
+
+    button:hover { transform: scale(1.05); }
+
+    .btn-primary { background: #ffca28; color: #000; }
+    .btn-success { background: #00e676; color: #000; }
+    .btn-next { background: #29b6f6; color: #000; }
+
+    .level-card {
+      padding: 15px;
+      border-radius: 12px;
+      margin: 10px 0;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .level-card.locked {
+      background: rgba(0,0,0,0.3);
+      color: #aaa;
+      cursor: not-allowed;
+    }
+
+    #questionBox {
+      font-size: 24px;
+      padding: 15px;
+      background: rgba(0,0,0,0.25);
+      border-radius: 12px;
+      margin: 15px 0;
+    }
+
+    #feedback {
+      font-size: 18px;
+      min-height: 24px;
+      margin-top: 10px;
+    }
+
+    .score {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    #celebration {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Welcome Screen -->
+  <div id="welcomeScreen" class="screen active">
+    <h1>Maths Genius 🎯</h1>
+    <p>Enter your name to start</p>
+    <input type="text" id="playerNameInput" placeholder="Your Name">
+    <button class="btn-primary" id="submitNameBtn">Submit</button>
+  </div>
+
+  <!-- Intro Screen -->
+  <div id="introScreen" class="screen hidden">
+    <h1 id="welcomeMsg"></h1>
+    <p>The game is created by Mr. Stark</p>
+    <button class="btn-next" id="startGameBtn">Next</button>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="gameScreen" class="screen hidden">
+    <div class="score" id="scoreDisplay">Score: 0</div>
+    <div id="levelContainer"></div>
+
+    <div id="subLevelContainer" class="hidden">
+      <h2 id="currentLevelText"></h2>
+      <div id="questionBox"></div>
+      <input type="number" id="answerInput" placeholder="Enter answer">
+      <button class="btn-success" id="submitAnswerBtn">Submit</button>
+      <div id="feedback"></div>
+    </div>
+  </div>
+
+  <!-- Celebration Screen -->
+  <div id="celebration" class="screen hidden">
+    <div>
+      <h1>🎉 Congratulations <span id="playerNameCelebration"></span> 🎉</h1>
+      <p>You completed Maths Genius</p>
+      <p>Your final score: <b><span id="finalScore"></span></b></p>
+      <button class="btn-primary" id="restartBtn">Restart Game</button>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL_LEVELS = 20;
+    const SUB_LEVELS = ["Addition", "Subtraction", "Multiplication", "Division"];
+
+    let playerName = "";
+    let score = 0;
+    let level = 1;
+    let subIndex = 0;
+    let correctAnswer = 0;
+    let unlockedLevels = [1];
+
+    const welcomeScreen = document.getElementById("welcomeScreen");
+    const introScreen = document.getElementById("introScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const celebrationScreen = document.getElementById("celebration");
+
+    const submitNameBtn = document.getElementById("submitNameBtn");
+    const startGameBtn = document.getElementById("startGameBtn");
+    const welcomeMsg = document.getElementById("welcomeMsg");
+
+    const levelContainer = document.getElementById("levelContainer");
+    const subLevelContainer = document.getElementById("subLevelContainer");
+    const currentLevelText = document.getElementById("currentLevelText");
+    const questionBox = document.getElementById("questionBox");
+    const answerInput = document.getElementById("answerInput");
+    const submitAnswerBtn = document.getElementById("submitAnswerBtn");
+    const feedback = document.getElementById("feedback");
+    const scoreDisplay = document.getElementById("scoreDisplay");
+
+    const playerNameCelebration = document.getElementById("playerNameCelebration");
+    const finalScore = document.getElementById("finalScore");
+    const restartBtn = document.getElementById("restartBtn");
+
+    submitNameBtn.onclick = () => {
+      const name = document.getElementById("playerNameInput").value.trim();
+      if (!name) return alert("Enter your name");
+      playerName = name;
+      welcomeMsg.textContent = `Hey ${playerName}, welcome to Maths Genius`;
+      welcomeScreen.classList.remove("active");
+      introScreen.classList.remove("hidden");
+      introScreen.classList.add("active");
+    };
+
+    startGameBtn.onclick = () => {
+      introScreen.classList.remove("active");
+      gameScreen.classList.remove("hidden");
+      gameScreen.classList.add("active");
+      renderLevels();
+    };
+
+    function renderLevels() {
+      levelContainer.innerHTML = "";
+      for (let i = 1; i <= TOTAL_LEVELS; i++) {
+        const card = document.createElement("div");
+        card.className = "level-card";
+        card.textContent = `Level ${i}`;
+        if (!unlockedLevels.includes(i)) card.classList.add("locked");
+        card.onclick = () => {
+          if (!unlockedLevels.includes(i)) return;
+          level = i;
+          subIndex = 0;
+          levelContainer.style.display = "none";
+          subLevelContainer.classList.remove("hidden");
+          nextQuestion();
+        };
+        levelContainer.appendChild(card);
+      }
+    }
+
+    function difficulty(lvl) {
+      return 5 + lvl * 2;
+    }
+
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function nextQuestion() {
+      const max = difficulty(level);
+      const type = SUB_LEVELS[subIndex];
+      let a, b;
+
+      if (type === "Addition") {
+        a = rand(1, max); b = rand(1, max);
+        correctAnswer = a + b;
+        questionBox.textContent = `${a} + ${b}`;
+      }
+      if (type === "Subtraction") {
+        a = rand(1, max); b = rand(1, a);
+        correctAnswer = a - b;
+        questionBox.textContent = `${a} - ${b}`;
+      }
+      if (type === "Multiplication") {
+        a = rand(1, max / 2); b = rand(2, 9);
+        correctAnswer = a * b;
+        questionBox.textContent = `${a} × ${b}`;
+      }
+      if (type === "Division") {
+        b = rand(2, 9);
+        correctAnswer = rand(1, max / 2);
+        a = b * correctAnswer;
+        questionBox.textContent = `${a} ÷ ${b}`;
+      }
+
+      currentLevelText.textContent = `Level ${level} - ${type}`;
+      answerInput.value = "";
+      feedback.textContent = "";
+      answerInput.focus();
+    }
+
+    submitAnswerBtn.onclick = () => {
+      if (answerInput.value === "") return feedback.textContent = "⚠️ Enter a number";
+      if (Number(answerInput.value) === correctAnswer) {
+        score += 10;
+        scoreDisplay.textContent = `Score: ${score}`;
+        feedback.textContent = "✅ Correct!";
+        subIndex++;
+
+        if (subIndex === SUB_LEVELS.length) {
+          if (level === TOTAL_LEVELS) {
+            gameScreen.classList.remove("active");
+            celebrationScreen.classList.remove("hidden");
+            celebrationScreen.classList.add("active");
+            playerNameCelebration.textContent = playerName;
+            finalScore.textContent = score;
+            return;
+          }
+          unlockedLevels.push(level + 1);
+          alert(`Level ${level} completed`);
+          subLevelContainer.classList.add("hidden");
+          levelContainer.style.display = "block";
+          renderLevels();
+        } else {
+          setTimeout(nextQuestion, 500);
+        }
+      } else {
+        feedback.textContent = "❌ Try again";
+      }
+    };
+
+    restartBtn.onclick = () => location.reload();
+  </script>
+
+</body>
+</html>
