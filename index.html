@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VTU 5th Semester CGPA Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            min-height: 700px;
+        }
+        
+        /* Welcome Page Styles */
+        .welcome-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 40px;
+            min-height: 700px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8eaf6 100%);
+        }
+        
+        .welcome-icon {
+            font-size: 120px;
+            color: #3949ab;
+            margin-bottom: 40px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .welcome-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #1a237e;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .welcome-subtitle {
+            font-size: 1.5rem;
+            color: #3949ab;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+        
+        .creator {
+            font-size: 1.3rem;
+            color: #283593;
+            font-weight: 600;
+            margin-top: 40px;
+            padding: 15px 30px;
+            background: rgba(57, 73, 171, 0.1);
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .creator i {
+            color: #3949ab;
+        }
+        
+        .next-btn {
+            margin-top: 60px;
+            padding: 18px 50px;
+            background: linear-gradient(to right, #3949ab, #1a237e);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 20px rgba(57, 73, 171, 0.3);
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(57, 73, 171, 0.4);
+        }
+        
+        .vtu-badge {
+            background: #1a237e;
+            color: white;
+            padding: 8px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Main Calculator Styles */
+        .calculator-page {
+            display: none;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #1a237e, #3949ab);
+            color: white;
+            padding: 25px 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .institute-info {
+            font-size: 0.9rem;
+            color: #bbdefb;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 30px;
+            gap: 30px;
+        }
+        
+        .left-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .right-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #3949ab;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-title {
+            font-size: 1.4rem;
+            color: #1a237e;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8eaf6;
+        }
+        
+        .card-title i {
+            color: #3949ab;
+        }
+        
+        .branch-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .branch-btn {
+            flex: 1;
+            padding: 18px 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background: #e8eaf6;
+            color: #3949ab;
+            border: 2px solid transparent;
+        }
+        
+        .branch-btn:hover {
+            background: #d1d9ff;
+            transform: translateY(-3px);
+        }
+        
+        .branch-btn.active {
+            background: #3949ab;
+            color: white;
+            border-color: #1a237e;
+            box-shadow: 0 5px 15px rgba(57, 73, 171, 0.3);
+        }
+        
+        .subject-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .subject-table th, .subject-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .subject-table th {
+            background-color: #e8eaf6;
+            font-weight: 600;
+            color: #1a237e;
+        }
+        
+        .subject-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .subject-code {
+            font-family: monospace;
+            font-weight: 600;
+            color: #3949ab;
+        }
+        
+        .marks-input {
+            width: 80px;
+            padding: 8px 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            text-align: center;
+        }
+        
+        .marks-input:focus {
+            border-color: #3949ab;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(57, 73, 171, 0.1);
+        }
+        
+        .marks-input:disabled {
+            background-color: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+            border-color: #eee;
+        }
+        
+        .credits {
+            font-weight: 600;
+            color: #555;
+            text-align: center;
+        }
+        
+        .cgpa-display {
+            background: linear-gradient(135deg, #3949ab, #1a237e);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(57, 73, 171, 0.3);
+        }
+        
+        .cgpa-label {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .cgpa-value {
+            font-size: 4.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin: 15px 0;
+        }
+        
+        .grade-text {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-calculate {
+            background: linear-gradient(to right, #3949ab, #1a237e);
+            color: white;
+        }
+        
+        .btn-calculate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(57, 73, 171, 0.3);
+        }
+        
+        .btn-reset {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        .btn-reset:hover {
+            background: #e0e0e0;
+        }
+        
+        .subject-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .grade-scale {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .grade-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #3949ab;
+            font-size: 0.9rem;
+        }
+        
+        .grade-letter {
+            font-weight: 600;
+            color: #1a237e;
+        }
+        
+        .grade-range {
+            color: #666;
+        }
+        
+        .grade-points {
+            font-weight: 600;
+            color: #3949ab;
+            float: right;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+        
+        .subject-details {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .subject-details strong {
+            color: #333;
+        }
+        
+        /* Scrollbar styling */
+        .subject-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .subject-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .subject-list::-webkit-scrollbar-thumb {
+            background: #bdbdbd;
+            border-radius: 10px;
+        }
+        
+        .subject-list::-webkit-scrollbar-thumb:hover {
+            background: #9e9e9e;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+                padding: 20px;
+            }
+            
+            .welcome-title {
+                font-size: 2.5rem;
+            }
+            
+            .welcome-icon {
+                font-size: 80px;
+            }
+            
+            .branch-selector {
+                flex-direction: column;
+            }
+            
+            .cgpa-value {
+                font-size: 3.5rem;
+            }
+            
+            .subject-table {
+                font-size: 0.9rem;
+            }
+            
+            .subject-table th, .subject-table td {
+                padding: 8px 10px;
+            }
+            
+            .marks-input {
+                width: 70px;
+                padding: 6px 8px;
+            }
+        }
+        
+        .semester-badge {
+            background: #3949ab;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .back-to-welcome {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .back-to-welcome:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .non-credit-subject {
+            background-color: #f9f9f9;
+            font-style: italic;
+        }
+        
+        .non-credit-subject td {
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Page -->
+    <div class="container" id="welcome-container">
+        <div class="welcome-page">
+            <div class="welcome-icon">
+                <i class="fas fa-calculator"></i>
+            </div>
+            
+            <h1 class="welcome-title">Welcome to CGPA Calculator</h1>
+            <h2 class="welcome-subtitle">VTU 5th Semester (CSE & ME)</h2>
+            
+            <div class="creator">
+                <i class="fas fa-code"></i>
+                <span>Created by Starkk</span>
+            </div>
+            
+            <div class="vtu-badge">
+                <i class="fas fa-university"></i>
+                <span>Hirasugar Institute of Technology, Nidasoshi</span>
+            </div>
+            
+            <button class="next-btn" id="start-btn">
+                Get Started
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Calculator Page (Initially Hidden) -->
+    <div class="container" id="calculator-container" style="display: none;">
+        <div class="header">
+            <button class="back-to-welcome" id="back-btn">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <h1><i class="fas fa-calculator"></i> VTU 5th Semester CGPA Calculator</h1>
+            <p>Hirasugar Institute of Technology, Nidasoshi</p>
+            <p class="institute-info">Approved by AICTE, New Delhi | Permanently Affiliated to VTU, Belagavi | Accredited at 'A+' Grade by NAAC</p>
+            <div class="semester-badge">5th Semester Only</div>
+        </div>
+        
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-code-branch"></i> Select Branch</h2>
+                    
+                    <div class="branch-selector">
+                        <button class="branch-btn active" id="btn-cse">
+                            <i class="fas fa-laptop-code"></i> Computer Science & Engineering
+                        </button>
+                        <button class="branch-btn" id="btn-mech">
+                            <i class="fas fa-cogs"></i> Mechanical Engineering
+                        </button>
+                    </div>
+                    
+                    <div class="subject-list">
+                        <h2 class="card-title"><i class="fas fa-book"></i> Enter Marks for Each Subject</h2>
+                        
+                        <div id="subject-container">
+                            <!-- Subjects will be dynamically loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="button-container">
+                        <button class="btn btn-calculate" id="calculate-btn">
+                            <i class="fas fa-calculator"></i> Calculate CGPA
+                        </button>
+                        <button class="btn btn-reset" id="reset-btn">
+                            <i class="fas fa-redo"></i> Reset All
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-info-circle"></i> VTU Grading System</h2>
+                    <div class="grade-scale">
+                        <div class="grade-item">
+                            <span class="grade-letter">S Grade</span>
+                            <span class="grade-points">10 Points</span><br>
+                            <span class="grade-range">90% and above</span>
+                        </div>
+                        <div class="grade-item">
+                            <span class="grade-letter">A Grade</span>
+                            <span class="grade-points">9 Points</span><br>
+                            <span class="grade-range">80% - 89%</span>
+                        </div>
+                        <div class="grade-item">
+                            <span class="grade-letter">B Grade</span>
+                            <span class="grade-points">8 Points</span><br>
+                            <span class="grade-range">70% - 79%</span>
+                        </div>
+                        <div class="grade-item">
+                            <span class="grade-letter">C Grade</span>
+                            <span class="grade-points">7 Points</span><br>
+                            <span class="grade-range">60% - 69%</span>
+                        </div>
+                        <div class="grade-item">
+                            <span class="grade-letter">D Grade</span>
+                            <span class="grade-points">6 Points</span><br>
+                            <span class="grade-range">50% - 59%</span>
+                        </div>
+                        <div class="grade-item">
+                            <span class="grade-letter">E Grade</span>
+                            <span class="grade-points">4 Points</span><br>
+                            <span class="grade-range">40% - 49%</span>
+                        </div>
+                        <div class="grade-item">
+                            <span class="grade-letter">F Grade</span>
+                            <span class="grade-points">0 Points</span><br>
+                            <span class="grade-range">Below 40%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="subject-details">
+                        <p><strong>Note:</strong> CGPA is calculated based on VTU's 10-point grading system. Enter marks obtained out of 100 for each subject. Yoga subject has 0 credits and doesn't require marks.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-chart-line"></i> CGPA Result</h2>
+                    
+                    <div class="cgpa-display">
+                        <div class="cgpa-label">Your 5th Semester CGPA</div>
+                        <div class="cgpa-value" id="cgpa-value">0.00</div>
+                        <div class="grade-text" id="grade-text">Enter marks and click Calculate</div>
+                    </div>
+                    
+                    <div style="margin-top: 25px;">
+                        <h3 style="color: #1a237e; margin-bottom: 15px;">Current Branch: <span id="current-branch">Computer Science & Engineering</span></h3>
+                        <p style="color: #666; margin-bottom: 10px;">Total Credits: <span id="total-credits">22</span></p>
+                        <p style="color: #666;">Total Subjects: <span id="total-subjects">9</span></p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-history"></i> Calculation Details</h2>
+                    
+                    <div id="calculation-details" style="color: #666; font-size: 0.95rem; line-height: 1.6;">
+                        <p>CGPA = ? (Grade Points × Credits) / ? (Credits)</p>
+                        <p style="margin-top: 15px;">Enter marks for all subjects in the left panel, then click "Calculate CGPA" to see your result.</p>
+                    </div>
+                    
+                    <div id="subject-breakdown" style="margin-top: 20px;">
+                        <!-- Subject breakdown will appear here after calculation -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>VTU 5th Semester CGPA Calculator &copy; 2023 | Created by Starkk | For Hirasugar Institute of Technology, Nidasoshi</p>
+        </div>
+    </div>
+
+    <script>
+        // Subject data for CSE 5th Semester (based on the timetable)
+        const cseSubjects = [
+            { code: 'CS501', name: 'Computer Networks', credits: 4, abbreviation: 'CN' },
+            { code: 'CS502', name: 'Research Methodology and IPR', credits: 3, abbreviation: 'RMPR' },
+            { code: 'CS503', name: 'Theory of Computation', credits: 4, abbreviation: 'TOC' },
+            { code: 'CS504', name: 'Unix System Programming', credits: 3, abbreviation: 'USP' },
+            { code: 'CS505L', name: 'Computer Networks Lab', credits: 2, abbreviation: 'CN Lab' },
+            { code: 'CS506L', name: 'Unix System Programming Lab', credits: 2, abbreviation: 'USP Lab' },
+            { code: 'CS507', name: 'Fundamentals of Computing Systems', credits: 3, abbreviation: 'FCS' },
+            { code: 'MC501', name: 'Environmental Studies', credits: 1, abbreviation: 'ES' },
+            { code: 'BYOK559', name: 'Yoga', credits: 0, abbreviation: 'Yoga' }
+        ];
+        
+        // Subject data for Mechanical Engineering 5th Semester (based on the timetable)
+        const mechSubjects = [
+            { code: 'BME501', name: 'Industrial Management & Entrepreneurship', credits: 3, abbreviation: 'IME' },
+            { code: 'BME502', name: 'Turbo Machines', credits: 4, abbreviation: 'TM' },
+            { code: 'BME503', name: 'Theory of Machines', credits: 4, abbreviation: 'TOM' },
+            { code: 'BME504L', name: 'CNC Programming and 3-D Printing Lab', credits: 1, abbreviation: 'CNC-3D Lab' },
+            { code: 'BME515D', name: 'Energy Engineering', credits: 3, abbreviation: 'EE' },
+            { code: 'BME586', name: 'Mini Project', credits: 2, abbreviation: 'Mini Project' },
+            { code: 'BRMK557', name: 'Research Methodology and IPR', credits: 3, abbreviation: 'RM & IPR' },
+            { code: 'BESK508', name: 'Environmental Studies', credits: 2, abbreviation: 'ES' },
+            { code: 'BYOK559', name: 'Yoga', credits: 0, abbreviation: 'Yoga' }
+        ];
+        
+        // Application state
+        let currentBranch = 'cse';
+        let marks = {};
+        
+        // DOM elements
+        const welcomeContainer = document.getElementById('welcome-container');
+        const calculatorContainer = document.getElementById('calculator-container');
+        const startBtn = document.getElementById('start-btn');
+        const backBtn = document.getElementById('back-btn');
+        const btnCSE = document.getElementById('btn-cse');
+        const btnMech = document.getElementById('btn-mech');
+        const subjectContainer = document.getElementById('subject-container');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const cgpaValue = document.getElementById('cgpa-value');
+        const gradeText = document.getElementById('grade-text');
+        const currentBranchSpan = document.getElementById('current-branch');
+        const totalCreditsSpan = document.getElementById('total-credits');
+        const totalSubjectsSpan = document.getElementById('total-subjects');
+        const calculationDetails = document.getElementById('calculation-details');
+        const subjectBreakdown = document.getElementById('subject-breakdown');
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+        });
+        
+        // Load subjects into the table
+        function loadSubjects(subjects) {
+            subjectContainer.innerHTML = '';
+            
+            // Create table
+            let tableHTML = `
+                <table class="subject-table">
+                    <thead>
+                        <tr>
+                            <th>Subject Code</th>
+                            <th>Subject Name</th>
+                            <th>Credits</th>
+                            <th>Marks (0-100)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            subjects.forEach((subject, index) => {
+                const isZeroCredit = subject.credits === 0;
+                const rowClass = isZeroCredit ? 'class="non-credit-subject"' : '';
+                
+                tableHTML += `
+                    <tr ${rowClass}>
+                        <td><span class="subject-code">${subject.code}</span></td>
+                        <td>${subject.name}${isZeroCredit ? ' (0 Credit)' : ''}</td>
+                        <td class="credits">${subject.credits}</td>
+                        <td>
+                            <input type="number" min="0" max="100" class="marks-input" 
+                                   id="marks-${index}" placeholder="${isZeroCredit ? 'Not Required' : 'Enter marks'}" 
+                                   data-subject="${subject.code}" 
+                                   ${isZeroCredit ? 'disabled' : ''}>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            subjectContainer.innerHTML = tableHTML;
+            
+            // Add event listeners to mark inputs (only for subjects with credits)
+            subjects.forEach((subject, index) => {
+                if (subject.credits > 0) {
+                    const input = document.getElementById(`marks-${index}`);
+                    input.addEventListener('input', function() {
+                        const marksValue = parseInt(this.value);
+                        if (marksValue >= 0 && marksValue <= 100) {
+                            marks[subject.code] = marksValue;
+                        } else if (this.value === '') {
+                            delete marks[subject.code];
+                        }
+                    });
+                }
+            });
+            
+            // Update total credits and subjects
+            const totalCredits = subjects.reduce((sum, subject) => sum + subject.credits, 0);
+            const totalSubjects = subjects.length;
+            const subjectsWithCredits = subjects.filter(subject => subject.credits > 0).length;
+            
+            totalCreditsSpan.textContent = totalCredits;
+            totalSubjectsSpan.textContent = `${totalSubjects} (${subjectsWithCredits} with credits)`;
+        }
+        
+        // Update branch information
+        function updateBranchInfo(branch) {
+            if (branch === 'cse') {
+                currentBranchSpan.textContent = 'Computer Science & Engineering';
+                currentBranchSpan.style.color = '#3949ab';
+            } else {
+                currentBranchSpan.textContent = 'Mechanical Engineering';
+                currentBranchSpan.style.color = '#3949ab';
+            }
+        }
+        
+        // Calculate CGPA
+        function calculateCGPA() {
+            const subjects = currentBranch === 'cse' ? cseSubjects : mechSubjects;
+            
+            // Check if all subjects with credits have marks entered
+            const subjectsWithCredits = subjects.filter(subject => subject.credits > 0);
+            const allMarksEntered = subjectsWithCredits.every(subject => {
+                return marks[subject.code] !== undefined && 
+                       marks[subject.code] >= 0 && 
+                       marks[subject.code] <= 100;
+            });
+            
+            if (!allMarksEntered) {
+                cgpaValue.textContent = '0.00';
+                gradeText.textContent = 'Please enter marks for all subjects with credits';
+                gradeText.style.color = '#f44336';
+                return;
+            }
+            
+            // Calculate total grade points
+            let totalCredits = 0;
+            let totalGradePoints = 0;
+            let breakdownHTML = '<h3 style="color: #1a237e; margin-bottom: 15px;">Subject-wise Grade Points:</h3><div style="max-height: 200px; overflow-y: auto;">';
+            
+            subjects.forEach(subject => {
+                if (subject.credits > 0) {
+                    const subjectMarks = marks[subject.code];
+                    const credits = subject.credits;
+                    
+                    // Calculate grade point based on VTU system
+                    let gradePoint = 0;
+                    let grade = '';
+                    
+                    if (subjectMarks >= 90) {
+                        gradePoint = 10;
+                        grade = 'S';
+                    } else if (subjectMarks >= 80) {
+                        gradePoint = 9;
+                        grade = 'A';
+                    } else if (subjectMarks >= 70) {
+                        gradePoint = 8;
+                        grade = 'B';
+                    } else if (subjectMarks >= 60) {
+                        gradePoint = 7;
+                        grade = 'C';
+                    } else if (subjectMarks >= 50) {
+                        gradePoint = 6;
+                        grade = 'D';
+                    } else if (subjectMarks >= 40) {
+                        gradePoint = 4;
+                        grade = 'E';
+                    } else {
+                        gradePoint = 0;
+                        grade = 'F';
+                    }
+                    
+                    totalGradePoints += gradePoint * credits;
+                    totalCredits += credits;
+                    
+                    // Add to breakdown
+                    breakdownHTML += `
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span>${subject.code} (${subject.abbreviation})</span>
+                            <span>${subjectMarks}% ? ${grade} (${gradePoint} pts)</span>
+                        </div>
+                    `;
+                } else {
+                    // For 0 credit subjects (like Yoga)
+                    breakdownHTML += `
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; color: #888; font-style: italic;">
+                            <span>${subject.code} (${subject.abbreviation})</span>
+                            <span>No credits - Not included in CGPA</span>
+                        </div>
+                    `;
+                }
+            });
+            
+            breakdownHTML += '</div>';
+            
+            // Calculate CGPA
+            const cgpa = totalCredits > 0 ? totalGradePoints / totalCredits : 0;
+            cgpaValue.textContent = cgpa.toFixed(2);
+            
+            // Determine overall grade
+            let overallGrade = '';
+            let gradeColor = '#3949ab';
+            
+            if (cgpa >= 9) {
+                overallGrade = 'S (Outstanding)';
+                gradeColor = '#4caf50';
+            } else if (cgpa >= 8) {
+                overallGrade = 'A (Excellent)';
+                gradeColor = '#8bc34a';
+            } else if (cgpa >= 7) {
+                overallGrade = 'B (Very Good)';
+                gradeColor = '#ffc107';
+            } else if (cgpa >= 6) {
+                overallGrade = 'C (Good)';
+                gradeColor = '#ff9800';
+            } else if (cgpa >= 5) {
+                overallGrade = 'D (Satisfactory)';
+                gradeColor = '#f44336';
+            } else if (cgpa >= 4) {
+                overallGrade = 'E (Pass)';
+                gradeColor = '#f44336';
+            } else {
+                overallGrade = 'F (Fail)';
+                gradeColor = '#d32f2f';
+            }
+            
+            gradeText.textContent = `Grade: ${overallGrade}`;
+            gradeText.style.color = gradeColor;
+            
+            // Update calculation details
+            calculationDetails.innerHTML = `
+                <p>CGPA = ? (Grade Points × Credits) / ? (Credits)</p>
+                <p>Total Grade Points = ${totalGradePoints.toFixed(2)}</p>
+                <p>Total Credits (excluding Yoga) = ${totalCredits}</p>
+                <p>CGPA = ${totalGradePoints.toFixed(2)} / ${totalCredits} = ${cgpa.toFixed(2)}</p>
+                <p><em>Note: Yoga (BYOK559) has 0 credits and is not included in CGPA calculation</em></p>
+            `;
+            
+            // Show subject breakdown
+            subjectBreakdown.innerHTML = breakdownHTML;
+            
+            // Color code the CGPA value based on result
+            if (cgpa >= 8) {
+                cgpaValue.style.color = '#4caf50';
+            } else if (cgpa >= 7) {
+                cgpaValue.style.color = '#ffc107';
+            } else if (cgpa >= 6) {
+                cgpaValue.style.color = '#ff9800';
+            } else if (cgpa >= 5) {
+                cgpaValue.style.color = '#f44336';
+            } else {
+                cgpaValue.style.color = '#d32f2f';
+            }
+        }
+        
+        // Reset all inputs
+        function resetAll() {
+            const subjects = currentBranch === 'cse' ? cseSubjects : mechSubjects;
+            
+            subjects.forEach((subject, index) => {
+                if (subject.credits > 0) {
+                    const input = document.getElementById(`marks-${index}`);
+                    if (input) {
+                        input.value = '';
+                    }
+                }
+            });
+            
+            marks = {};
+            cgpaValue.textContent = '0.00';
+            gradeText.textContent = 'Enter marks and click Calculate';
+            gradeText.style.color = '#3949ab';
+            cgpaValue.style.color = '#333';
+            calculationDetails.innerHTML = '<p>CGPA = ? (Grade Points × Credits) / ? (Credits)</p><p style="margin-top: 15px;">Enter marks for all subjects in the left panel, then click "Calculate CGPA" to see your result.</p>';
+            subjectBreakdown.innerHTML = '';
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Start button (from welcome page to calculator)
+            startBtn.addEventListener('click', function() {
+                welcomeContainer.style.display = 'none';
+                calculatorContainer.style.display = 'block';
+                loadSubjects(cseSubjects);
+                updateBranchInfo('cse');
+            });
+            
+            // Back button (from calculator to welcome page)
+            backBtn.addEventListener('click', function() {
+                calculatorContainer.style.display = 'none';
+                welcomeContainer.style.display = 'block';
+                resetAll();
+            });
+            
+            // Branch selection
+            btnCSE.addEventListener('click', function() {
+                currentBranch = 'cse';
+                btnCSE.classList.add('active');
+                btnMech.classList.remove('active');
+                loadSubjects(cseSubjects);
+                updateBranchInfo('cse');
+                resetAll();
+            });
+            
+            btnMech.addEventListener('click', function() {
+                currentBranch = 'mech';
+                btnMech.classList.add('active');
+                btnCSE.classList.remove('active');
+                loadSubjects(mechSubjects);
+                updateBranchInfo('mech');
+                resetAll();
+            });
+            
+            // Calculate button
+            calculateBtn.addEventListener('click', calculateCGPA);
+            
+            // Reset button
+            resetBtn.addEventListener('click', resetAll);
+        }
+    </script>
+</body>
+</html>
